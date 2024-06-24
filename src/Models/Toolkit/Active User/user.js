@@ -1,18 +1,22 @@
 import { createSlice, createAsyncThunk, nanoid } from "@reduxjs/toolkit";
-import { auth, db, storage } from "../../FireBase/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { auth, db } from "../../FireBase/firebase";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";  // Import the function directly
 
 export const createUser = createAsyncThunk("user/createUser", async (userData) => {
     const { email, password, name, isApproval } = userData;
     try {
-        await auth.createUserWithEmailAndPassword(email, password, name);
-        const refData = addDoc(collection(db,"Users"),{
+
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "Users",user.uid), {
             name: name,
             email: email,
-            password: password, // Not: Güvenlik nedenleriyle şifreyi düz metin olarak saklamak önerilmez
             isApproval: isApproval,
-            id: nanoid(5)
+            id: user.uid
         });
+
         alert("Başarı ile oluşturuldu");
         return userData;
     } catch (err) {
@@ -28,7 +32,7 @@ export const user = createSlice({
         appStatus: {
             error: false,
             busy: false,
-            successful: false, // succesfull -> successful düzeltildi
+            successful: false,
         },
         userVideos: {
             video: []

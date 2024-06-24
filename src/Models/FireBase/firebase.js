@@ -1,11 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
-import { getFirestore } from 'firebase/firestore'
-
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_ENDPOINT,
+  apiKey: "AIzaSyAf_ktKbxmE4TTEiQexZPPhRK3jFyzHGcU",
   authDomain: "video-call-86c8a.firebaseapp.com",
   projectId: "video-call-86c8a",
   storageBucket: "video-call-86c8a.appspot.com",
@@ -15,8 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth()
-export const storage = getStorage()
-export const db = getFirestore()
-
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+export const db = getFirestore(app);
