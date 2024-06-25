@@ -1,9 +1,10 @@
-import { Box, AbsoluteCenter, FormControl, FormLabel, Input, FormErrorMessage, Button, Checkbox, Flex } from '@chakra-ui/react';
+import { Box, AbsoluteCenter, FormControl, FormLabel, Input, FormErrorMessage, Button, Checkbox, Flex, Text, Wrap, Spacer, Grid, GridItem } from '@chakra-ui/react';
 import "./CreateAccountPage.css"
 import { AddIcon } from '@chakra-ui/icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { createUser } from '../../Models/Toolkit/Active User/user';
+import { BsBoxArrowInRight } from 'react-icons/bs';
 
 function CreateAccountPage() {
     const [name, setName] = useState('');
@@ -16,8 +17,14 @@ function CreateAccountPage() {
     //email,password,name,isApproval,id}
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(createUser({email,password,name,isApproval}))
+        dispatch(createUser({ email, password, name, isApproval }))
     }
+
+    const appStatus = useSelector((state) => state.user.appStatus);
+    console.log("Uygulama Durumu" + appStatus.error)
+
+    const errorMessage = appStatus.error ? "Zaten hesabın var.❗❗❗" : ""
+    const busy = appStatus.busy
 
     return (
         <>
@@ -31,7 +38,18 @@ function CreateAccountPage() {
                         borderRadius='30px'
                         p={6} // Padding değeri düzenlendi
                     >
-                        <h1 className='login-title'>Video Cell</h1>
+                        <Grid templateColumns="repeat(10, 1fr)" gap={4} alignItems="center" mb={4}>
+                            <GridItem colSpan={2}/>
+                            <GridItem colSpan={6}>
+                                <h1 className='login-title'>Video Call</h1>
+                            </GridItem>
+                            <GridItem colSpan={2} display="flex" justifyContent="flex-end">
+                                <Button leftIcon={<BsBoxArrowInRight colorScheme='blue' fontSize="30px" />} colorScheme='blue' variant='ghost'>
+                                </Button>
+                            </GridItem>
+                        </Grid>
+
+
                         <form onSubmit={handleSubmit}>
                             <FormControl>
                                 <FormLabel mt="5px">Name</FormLabel>
@@ -46,18 +64,17 @@ function CreateAccountPage() {
                                 <FormLabel mt="5px">Remember Password</FormLabel>
                                 <Input type='password' value={password2} onChange={(e) => setPassword2(e.target.value)} />
 
-                                {/* FormErrorMessage sadece hata durumunda gösterilmelidir */}
-                                {/* <FormErrorMessage>Error 😮😮</FormErrorMessage> */}
-
                                 <Flex mt={5} alignItems="center">
                                     <Checkbox colorScheme='blue' isChecked={isApproval} onChange={(e) => setIsApproval(e.target.checked)}>
                                         I have read and approve
                                     </Checkbox>
                                 </Flex>
 
-                                <Button type='submit' leftIcon={<AddIcon />} colorScheme='blue' variant='solid' mt={6}>
+                                <Button isLoading={busy} type='submit' leftIcon={<AddIcon />} colorScheme='blue' variant='solid' mt={6}>
                                     Create Account
                                 </Button>
+
+                                <Text color="red" fontSize='l' mt={5}>{errorMessage}</Text>
                             </FormControl>
                         </form>
                     </Box>
